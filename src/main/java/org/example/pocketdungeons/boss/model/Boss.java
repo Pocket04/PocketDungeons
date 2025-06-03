@@ -18,7 +18,19 @@ public class Boss {
     private int HP;
 
     @Column
+    private int maxHP;
+
+    @Column
     private int strength;
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
+    }
+
     public int getId() {
         return id;
     }

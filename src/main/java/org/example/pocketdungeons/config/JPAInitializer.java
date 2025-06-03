@@ -25,7 +25,6 @@ public class JPAInitializer implements CommandLineRunner {
         this.token = token;
     }
 
-
     @Override
     public void run(String... args) throws Exception {
         JDA jda = JDABuilder.createDefault(token)
@@ -51,6 +50,12 @@ public class JPAInitializer implements CommandLineRunner {
                     .queue();
             guild.upsertCommand("createcharacter", "Creates a character with custom stats.")
                     .queue();
+            guild.upsertCommand("cast", "Cast a spell.")
+                    .addOption(OptionType.INTEGER, "spell", "Select the number of the spell you want to cast.", true)
+                    .queue();
+            guild.upsertCommand("deletecharacter", "Delete your character in order to create a new one.")
+                    .queue();
+
         }
 
     }

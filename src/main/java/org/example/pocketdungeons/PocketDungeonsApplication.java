@@ -19,7 +19,7 @@ import java.util.Arrays;
 @SpringBootApplication
 public class PocketDungeonsApplication {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 		SpringApplication.run(PocketDungeonsApplication.class, args);
 	}
 

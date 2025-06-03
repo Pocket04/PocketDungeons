@@ -31,7 +31,6 @@ public class EventListener extends ListenerAdapter {
         this.charService = charService;
     }
 
-
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
@@ -60,6 +59,14 @@ public class EventListener extends ListenerAdapter {
                         .addActionRow(defense)
                         .build();
                 event.replyModal(modal).queue();
+                break;
+            case "cast":
+                event.reply(charService.cast(event.getUser().getName(), event.getOption("spell").getAsInt())).queue();
+                break;
+            case "deletecharacter":
+                charService.deleteCharacter(event.getUser().getName());
+                event.reply("You have deleted your hero.").queue();
+                break;
         }
 
     }
