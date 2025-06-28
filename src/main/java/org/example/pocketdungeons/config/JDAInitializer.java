@@ -13,13 +13,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class JPAInitializer implements CommandLineRunner {
+public class JDAInitializer implements CommandLineRunner {
     private final EventListener eventListener;
     private final ModalListener modalListener;
     private final String token;
 
     @Autowired
-    public JPAInitializer(EventListener eventListener, ModalListener modalListener, @Value("${bot.token}") String token) {
+    public JDAInitializer(EventListener eventListener, ModalListener modalListener, @Value("${bot.token}") String token) {
         this.eventListener = eventListener;
         this.modalListener = modalListener;
         this.token = token;
@@ -38,6 +38,7 @@ public class JPAInitializer implements CommandLineRunner {
         Guild guild = jda.getGuildById("1376496435318620180");
 
         if (guild != null) {
+            guild.upsertCommand("start", "Start a game with all the existing characters.").queue();
             guild.upsertCommand("createboss", "Creates a boss with custom stats.")
                     .addOption(OptionType.STRING, "name", "The name of your boss", true)
                     .addOption(OptionType.INTEGER, "strength", "The strength of your boss", true)
@@ -55,8 +56,6 @@ public class JPAInitializer implements CommandLineRunner {
                     .queue();
             guild.upsertCommand("deletecharacter", "Delete your character in order to create a new one.")
                     .queue();
-
         }
-
     }
 }

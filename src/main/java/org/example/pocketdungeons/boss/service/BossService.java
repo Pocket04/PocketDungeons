@@ -2,7 +2,6 @@ package org.example.pocketdungeons.boss.service;
 
 import org.example.pocketdungeons.boss.model.Boss;
 import org.example.pocketdungeons.boss.repository.BossRepository;
-import org.example.pocketdungeons.config.JPAInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ public class BossService {
         this.bossRepository = bossRepository;
     }
 
-    public Boss createBoss(String name, int hp, int strength){
+    public Boss createBoss(String name, int strength, int hp){
         Boss boss = new Boss();
         boss.setHP(hp);
         boss.setMaxHP(hp);

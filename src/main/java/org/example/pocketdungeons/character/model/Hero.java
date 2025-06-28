@@ -29,6 +29,9 @@ public class Hero {
     private int defense;
 
     @Column
+    private String classType;
+
+    @Column
     private int spell1;
 
     @Column
@@ -36,6 +39,14 @@ public class Hero {
 
     @Column
     private int spell3;
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
 
     public int getSpell1() {
         return spell1;

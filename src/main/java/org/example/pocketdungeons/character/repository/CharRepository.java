@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface CharRepository extends JpaRepository<Hero, Integer> {
     Optional<Hero> getByPlayer(String player);
+    Optional<Hero> getByName(String name);
 }
