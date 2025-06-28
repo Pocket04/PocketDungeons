@@ -30,4 +30,11 @@ public class BossService {
         bossRepository.save(boss);
         return "The boss was damaged for " + amount + " and their current hp is " + hp;
     }
+
+    public Boss getBoss() {
+        return bossRepository.getByName("Boss");
+    }
+    public void deleteBoss(){
+        bossRepository.deleteById(1);
+    }
 }

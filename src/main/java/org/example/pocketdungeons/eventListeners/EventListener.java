@@ -26,8 +26,9 @@ public class EventListener extends ListenerAdapter {
     private final MiniBossService miniBossService;
     private final BossCharHelpService idfk;
     private final CharService charService;
-    private final Queue<String> heroQueue = new ArrayDeque<>();
-    private String hero;
+    private final Queue<Hero> heroQueue = new ArrayDeque<>();
+    private Hero hero = new Hero();
+    private boolean game = false;
 
     @Autowired
     public EventListener(BossService bossService, MiniBossService miniBossService, BossCharHelpService idfk, CharService charService) {
@@ -40,12 +41,12 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
-        if (!event.getUser().getName().equals(hero) && !heroQueue.isEmpty()){
+        if (!event.getUser().getName().equals(hero.getPlayer()) && !heroQueue.isEmpty()) {
             event.getChannel().sendMessage("Sorry, " + event.getUser().getName() + " it's not your turn yet.").queue();
             return;
         }
 
-        switch (event.getName()){
+        switch (event.getName()) {
             case "createboss":
                 Boss boss = bossService.createBoss(event.getOption("name").getAsString(), event.getOption("strength").getAsInt(), event.getOption("hp").getAsInt());
                 event.reply("Boss " + boss.getName() + " has been created.").queue();
@@ -75,7 +76,11 @@ public class EventListener extends ListenerAdapter {
                 event.replyModal(modal).queue();
                 break;
             case "cast":
-                event.reply(charService.cast(event.getUser().getName(), event.getOption("spell").getAsInt())).queue();
+                if (game) {
+                    event.reply(charService.cast(event.getUser().getId(), event.getOption("spell").getAsInt())).queue();
+                }else {
+                    event.reply("Game hasn't started yet!").queue();
+                }
                 break;
             case "deletecharacter":
                 charService.deleteCharacter(event.getUser().getName());
@@ -83,22 +88,27 @@ public class EventListener extends ListenerAdapter {
                 break;
             case "start":
                 heroQueue.addAll(charService.getAll());
-                heroQueue.add("Boss");
                 event.reply("The game has started. Your enemy is Boss").queue();
+                game = true;
                 break;
         }
-        if (!heroQueue.isEmpty()) {
-            hero = heroQueue.poll();
-            event.getChannel().sendMessage("It's " + hero + "'s turn.").queue();
-            if (heroQueue.peek() == null){
+        if (game) {
+            if (heroQueue.isEmpty()) {
+                if (bossService.getBoss().getHP() <= 0){
+                    event.getChannel().sendMessage("Yippie, Boss is Dead, Freedom is back on the menu!!!").queue();
+                    bossService.deleteBoss();
+                    return;
+                }
+                event.getChannel().sendMessage(idfk.bossDamage(-123123)).queue();
                 heroQueue.addAll(charService.getAll());
-                heroQueue.add("Boss");
+                if (heroQueue.isEmpty()) {
+                    event.getChannel().sendMessage("Game over, no more heroes left, Boss won.").queue();
+                    game = false;
+                    return;
+                }
             }
-            if (hero.equals("Boss")) {
-                event.getChannel().sendMessage(idfk.bossDamage(-5)).queue();
-                hero = heroQueue.poll();
-                event.getChannel().sendMessage("It's " + hero + "'s turn.").queue();
-            }
+            hero = heroQueue.poll();
+            event.getChannel().sendMessage("it's " + hero.getName() + "'s turn. " + "<@" + hero.getPlayer() + ">").queue();
         }
     }
 }

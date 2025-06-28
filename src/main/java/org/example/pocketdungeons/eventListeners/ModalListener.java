@@ -21,7 +21,7 @@ public class ModalListener extends ListenerAdapter {
     public void onModalInteraction(@NotNull ModalInteractionEvent event) {
 
         if (event.getModalId().equals("character-modal")){
-            String player = event.getUser().getName();
+            String player = event.getUser().getId();
             String name = event.getValue("name").getAsString();
             int hp = Integer.parseInt(event.getValue("hp").getAsString());
             int str = Integer.parseInt(event.getValue("str").getAsString());

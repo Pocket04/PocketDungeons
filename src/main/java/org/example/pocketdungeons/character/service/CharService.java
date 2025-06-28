@@ -6,7 +6,6 @@ import org.example.pocketdungeons.character.repository.CharRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,12 +93,17 @@ public class CharService {
         }
         return "The group was damaged by the boss's ability for: " + spell + System.lineSeparator() + death;
     }
-    public List<String> getAll(){
-        List<String> players = new ArrayList<>();
+    public List<Hero> getAll(){
+        List<Hero> heroes = new ArrayList<>();
         for (Hero hero : charRepository.findAll()) {
-            players.add(hero.getPlayer());
+            if (hero.getHP() > 0){
+                heroes.add(hero);
+            }
         }
-        return players;
+        return heroes;
+    }
+    public Hero getHero(String name){
+        return charRepository.findHeroByPlayer(name);
     }
 
 }

@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BossRepository extends JpaRepository<Boss, Integer> {
     Boss findByName(String name);
+
+    Boss getByName(String name);
 }
