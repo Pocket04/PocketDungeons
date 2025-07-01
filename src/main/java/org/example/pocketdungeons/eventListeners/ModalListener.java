@@ -23,11 +23,8 @@ public class ModalListener extends ListenerAdapter {
         if (event.getModalId().equals("character-modal")){
             String player = event.getUser().getId();
             String name = event.getValue("name").getAsString();
-            int hp = Integer.parseInt(event.getValue("hp").getAsString());
-            int str = Integer.parseInt(event.getValue("str").getAsString());
-            int def = Integer.parseInt(event.getValue("def").getAsString());
             String classType = event.getValue("class").getAsString();
-            charService.createCharacter(player, name, hp, str, def, classType);
+            charService.createCharacter(player, name, classType);
             event.deferReply().queue();
 
             event.getHook().sendMessage("You created your character! " + name).queue();

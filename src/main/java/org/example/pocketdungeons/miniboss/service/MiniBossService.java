@@ -1,6 +1,5 @@
 package org.example.pocketdungeons.miniboss.service;
 
-import org.example.pocketdungeons.boss.model.Boss;
 import org.example.pocketdungeons.miniboss.model.MiniBoss;
 import org.example.pocketdungeons.miniboss.repository.MiniBossRepository;
 import org.springframework.beans.factory.annotation.Autowired;

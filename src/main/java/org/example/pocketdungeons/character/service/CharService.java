@@ -21,17 +21,13 @@ public class CharService {
         this.charRepository = charRepository;
         this.bossService = bossService;
     }
-    public Hero createCharacter(String player, String name, int hp, int strength, int defense, String classType){
+    public Hero createCharacter(String player, String name, String classType){
         if (charRepository.getByPlayer(player).isPresent()){
             throw new RuntimeException("You already have a character.");
         }
 
         Hero character = new Hero();
-        character.setHP(hp);
-        character.setMaxHP(hp);
         character.setName(name);
-        character.setStrength(strength);
-        character.setDefense(defense);
         character.setPlayer(player);
         character.setClassType(classType);
         switch (classType){
@@ -39,16 +35,25 @@ public class CharService {
                 character.setSpell1(-1);
                 character.setSpell2(-2);
                 character.setSpell3(-3);
+                character.setDefense(10);
+                character.setMaxHP(20);
+                character.setHP(20);
                 break;
             case "Rogue":
                 character.setSpell1(-4);
                 character.setSpell2(-5);
                 character.setSpell3(-7);
+                character.setDefense(5);
+                character.setMaxHP(13);
+                character.setHP(13);
                 break;
             case "Priest":
                 character.setSpell1(-1);
                 character.setSpell2(-2);
                 character.setSpell3(5);
+                character.setDefense(3);
+                character.setMaxHP(10);
+                character.setHP(10);
                 break;
         }
         return charRepository.save(character);

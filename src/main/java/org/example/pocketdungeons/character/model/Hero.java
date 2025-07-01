@@ -2,7 +2,6 @@ package org.example.pocketdungeons.character.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 
 @Entity
 public class Hero {
@@ -21,9 +20,6 @@ public class Hero {
 
     @Column
     private int maxHP;
-
-    @Column
-    private int strength;
 
     @Column
     private int defense;
@@ -106,14 +102,6 @@ public class Hero {
 
     public void setHP(int HP) {
         this.HP = HP;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
     }
 
     public int getDefense() {

@@ -1,7 +1,6 @@
 package org.example.pocketdungeons.boss.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 
 @Entity
