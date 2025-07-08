@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 @Entity
 public class Hero {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
@@ -35,6 +34,10 @@ public class Hero {
 
     @Column
     private int spell3;
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getClassType() {
         return classType;

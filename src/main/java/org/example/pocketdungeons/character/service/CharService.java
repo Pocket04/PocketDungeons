@@ -38,6 +38,7 @@ public class CharService {
                 character.setDefense(10);
                 character.setMaxHP(20);
                 character.setHP(20);
+                character.setId(1);
                 break;
             case "Rogue":
                 character.setSpell1(-4);
@@ -46,6 +47,7 @@ public class CharService {
                 character.setDefense(5);
                 character.setMaxHP(13);
                 character.setHP(13);
+                character.setId(2);
                 break;
             case "Priest":
                 character.setSpell1(-1);
@@ -54,6 +56,7 @@ public class CharService {
                 character.setDefense(3);
                 character.setMaxHP(10);
                 character.setHP(10);
+                character.setId(3);
                 break;
         }
         return charRepository.save(character);
@@ -65,39 +68,6 @@ public class CharService {
         hero.ifPresent(charRepository::delete);
     }
 
-    public String cast(String player, int spell){
-        Optional<Hero> optHero = charRepository.getByPlayer(player);
-        if (optHero.isPresent()){
-            Hero hero = optHero.get();
-            int x = switch (spell) {
-                case 1 -> hero.getSpell1();
-                case 2 -> hero.getSpell2();
-                case 3 -> hero.getSpell3();
-                default -> 0;
-            };
-            if (x > 0){
-                return beTarget(player, x);
-            }
-            return bossService.beTarget(x);
-        }
-        return "Oh no, something went wrong!!!";
-    }
-
-    public String beTarget(String player, int spell){
-        List<Hero> characters = charRepository.findAll();
-        String death = "";
-        for (Hero character : characters) {
-            character.setHP(character.getHP() + spell);
-            if (character.getHP() <= 0){
-                death = character.getName() + " has died :( ";
-            }
-            charRepository.save(character);
-        }
-        if (spell > 0){
-            return player + " has healed their party for: " + spell;
-        }
-        return "The group was damaged by the boss's ability for: " + spell + System.lineSeparator() + death;
-    }
     public List<Hero> getAll(){
         List<Hero> heroes = new ArrayList<>();
         for (Hero hero : charRepository.findAll()) {
@@ -107,8 +77,23 @@ public class CharService {
         }
         return heroes;
     }
-    public Hero getHero(String name){
+    public Hero getHeroById(int id){
+        Optional<Hero> opthero = charRepository.findById(id);
+        return opthero.orElse(null);
+    }
+
+    public void reset(){
+        List<Hero> heroes = charRepository.findAll();
+        for (Hero hero : heroes) {
+            hero.setHP(hero.getMaxHP());
+            charRepository.save(hero);
+        }
+    }
+    public Hero getHeroByPlayer(String name){
         return charRepository.findHeroByPlayer(name);
     }
 
+    public void saveHero(Hero hero) {
+        charRepository.save(hero);
+    }
 }

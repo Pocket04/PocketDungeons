@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 public class Boss {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column
@@ -21,6 +20,22 @@ public class Boss {
 
     @Column
     private int strength;
+
+    @Column
+    private int turns;
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+
+    public int getTurns() {
+        return turns;
+    }
+
+    public void setTurns(int turns) {
+        this.turns = turns;
+    }
 
     public int getMaxHP() {
         return maxHP;

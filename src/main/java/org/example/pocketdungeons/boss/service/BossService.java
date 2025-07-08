@@ -5,6 +5,9 @@ import org.example.pocketdungeons.boss.repository.BossRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class BossService {
 
@@ -21,20 +24,31 @@ public class BossService {
         boss.setMaxHP(hp);
         boss.setName(name);
         boss.setStrength(strength);
+        boss.setId(100);
         return bossRepository.save(boss);
-    }
-    public String beTarget(int amount){
-        Boss boss = bossRepository.findByName("Boss");
-        int hp = boss.getHP() + amount;
-        boss.setHP(hp);
-        bossRepository.save(boss);
-        return "The boss was damaged for " + amount + " and their current hp is " + hp;
     }
 
     public Boss getBoss() {
-        return bossRepository.getByName("Boss");
+        Optional<Boss> optionalBoss = bossRepository.findById(100);
+        return optionalBoss.orElse(null);
+    }
+    public Boss getBossById(int id){
+        Optional<Boss> optBoss = bossRepository.findById(id);
+        return optBoss.orElse(null);
+    }
+    public void reset(){
+        List<Boss> bosses = bossRepository.findAll();
+        for (Boss boss : bosses) {
+            boss.setHP(boss.getMaxHP());
+            bossRepository.save(boss);
+        }
     }
     public void deleteBoss(){
-        bossRepository.deleteById(1);
+        bossRepository.deleteById(100);
+    }
+
+    public void saveBoss(Boss boss) {
+        System.out.println(boss.getId());
+        bossRepository.save(boss);
     }
 }

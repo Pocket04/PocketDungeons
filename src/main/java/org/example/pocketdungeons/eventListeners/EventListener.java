@@ -9,7 +9,7 @@ import org.example.pocketdungeons.boss.model.Boss;
 import org.example.pocketdungeons.boss.service.BossService;
 import org.example.pocketdungeons.character.model.Hero;
 import org.example.pocketdungeons.character.service.CharService;
-import org.example.pocketdungeons.helpmeimconfused.BossCharHelpService;
+import org.example.pocketdungeons.helper.CombatHelper;
 import org.example.pocketdungeons.miniboss.model.MiniBoss;
 import org.example.pocketdungeons.miniboss.service.MiniBossService;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class EventListener extends ListenerAdapter {
 
     private final BossService bossService;
     private final MiniBossService miniBossService;
-    private final BossCharHelpService idfk;
+    private final CombatHelper idfk;
     private final CharService charService;
     private final Queue<Hero> heroQueue = new ArrayDeque<>();
     private Hero hero = new Hero();
@@ -32,7 +32,7 @@ public class EventListener extends ListenerAdapter {
     private boolean game = false;
 
     @Autowired
-    public EventListener(BossService bossService, MiniBossService miniBossService, BossCharHelpService idfk, CharService charService) {
+    public EventListener(BossService bossService, MiniBossService miniBossService, CombatHelper idfk, CharService charService) {
         this.bossService = bossService;
         this.miniBossService = miniBossService;
         this.idfk = idfk;
@@ -41,7 +41,6 @@ public class EventListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-
         if (game) {
             if (!event.getUser().getId().equals(hero.getPlayer())) {
                 event.getChannel().sendMessage("Sorry, " + event.getUser().getName() + " it's not your turn yet.").queue();
@@ -49,20 +48,44 @@ public class EventListener extends ListenerAdapter {
             }
             switch (event.getName()){
                 case "cast":
-                    event.reply(charService.cast(event.getUser().getId(), event.getOption("spell").getAsInt())).queue();
+                    int spell = event.getOption("spell").getAsInt();
+                    switch (spell){
+                        case 1:
+                            event.reply(idfk.cast(event.getOption("target").getAsInt(), charService.getHeroByPlayer(event.getUser().getId()).getSpell1())).queue();
+                            break;
+                        case 2:
+                            event.reply(idfk.cast(event.getOption("target").getAsInt(), charService.getHeroByPlayer(event.getUser().getId()).getSpell2())).queue();
+                            break;
+                        case 3:
+                            event.reply(idfk.cast(event.getOption("target").getAsInt(), charService.getHeroByPlayer(event.getUser().getId()).getSpell3())).queue();
+                            break;
+                    }
                     break;
+                case "reset":
+                    game = false;
+                    idfk.reset();
+                    heroQueue.clear();
+                    event.reply("Game has been reset, everyone is full hp now.").queue();
+                    return;
                 default:
-                    event.reply("Sorry, you can't do that during a game.").queue();
+                    event.reply("Sorry, you can't do that during combat.").queue();
                     return;
             }
-            if (bossService.getBoss().getHP() <= 0){
+            boss = bossService.getBossById(100);
+            if (boss.getHP() <= 0){
                 event.getChannel().sendMessage("Yippie, Boss is Dead, Freedom is back on the menu!!!").queue();
                 bossService.deleteBoss();
                 game = false;
                 return;
             }
             if (heroQueue.isEmpty()) {
-                event.getChannel().sendMessage(idfk.bossDamage(-3)).queue();
+                if (boss.getTurns() % 3 != 0){
+                    event.getChannel().sendMessage(idfk.cast(1, -2)).queue();
+                }else {
+                    event.getChannel().sendMessage(idfk.cast(1, -5)).queue();
+                }
+                boss.setTurns(boss.getTurns() + 1);
+                bossService.saveBoss(boss);
                 heroQueue.addAll(charService.getAll());
                 if (heroQueue.isEmpty()) {
                     event.getChannel().sendMessage("Game over, no more heroes left, Boss won.").queue();
@@ -75,8 +98,8 @@ public class EventListener extends ListenerAdapter {
         } else {
             switch (event.getName()) {
                 case "createboss":
-                    Boss boss = bossService.createBoss(event.getOption("name").getAsString(), event.getOption("strength").getAsInt(), event.getOption("hp").getAsInt());
-                    event.reply("Boss " + boss.getName() + " has been created.").queue();
+                    Boss createdBoss = bossService.createBoss(event.getOption("name").getAsString(), event.getOption("strength").getAsInt(), event.getOption("hp").getAsInt());
+                    event.reply("Boss " + createdBoss.getName() + " has been created.").queue();
                     break;
                 case "createminiboss":
                     MiniBoss miniboss = miniBossService.createBoss(event.getOption("name").getAsString(), event.getOption("strength").getAsInt(), event.getOption("hp").getAsInt());
@@ -101,11 +124,13 @@ public class EventListener extends ListenerAdapter {
                     heroQueue.addAll(charService.getAll());
                     event.reply("The game has started. Your enemy is Boss").queue();
                     game = true;
+                    boss = bossService.getBoss();
                     hero = heroQueue.poll();
                     event.getChannel().sendMessage("it's " + hero.getName() + "'s turn. " + "<@" + hero.getPlayer() + ">").queue();
                     break;
                 default:
                     event.reply("Command unavailable while out of combat.").queue();
+                    break;
             }
         }
     }

@@ -52,10 +52,12 @@ public class JDAInitializer implements CommandLineRunner {
             guild.upsertCommand("createcharacter", "Creates a character with custom stats.")
                     .queue();
             guild.upsertCommand("cast", "Cast a spell.")
+                    .addOption(OptionType.INTEGER, "target", "Select the number of the spell you want to cast.", true)
                     .addOption(OptionType.INTEGER, "spell", "Select the number of the spell you want to cast.", true)
                     .queue();
             guild.upsertCommand("deletecharacter", "Delete your character in order to create a new one.")
                     .queue();
+            guild.upsertCommand("reset", "Resets the game, putting every character, and boss to max hp and stopping the game.").queue();
         }
     }
 }
